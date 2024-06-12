@@ -16,67 +16,17 @@ c.execute("""CREATE TABLE clothing (
 
 c.executemany("INSERT INTO clothing VALUES (?, ?, ?, ?, ?, ?, ?)", (clothing_items))
 
-def tester(type, x):
+def tester(type, column, x):
     while True:
-        x = input(f'{type} clothing? (Press enter for any)\n').lower()
+        x = input(f'What is this piece of clothing\'s {type}? (Press enter for any)\n').lower()
         if x == '':
             return x
-        c.execute(f"SELECT * FROM clothing WHERE description LIKE '%{x}%'")
+        c.execute(f"SELECT * FROM clothing WHERE {column} LIKE '%{x}%'")
         results = c.fetchall()
         if len(results) < 1:
             print('\nUnfortunately there is nothing described like that, please enter something else...\nIf you wish to bypass this, please press enter\n')
         else:
             return x
-
-
-def how_describe():
-
-    while True:
-        descrip_choice = input('How you would describe this clothing? (Press enter for any)\n').lower()
-        if descrip_choice == '':
-            return descrip_choice
-        c.execute(f"SELECT * FROM clothing WHERE description LIKE '%{descrip_choice}%'")
-        results = c.fetchall()
-        if len(results) < 1:
-            print('\nUnfortunately there is nothing described like that, please enter something else...\nIf you wish to bypass this, please press enter\n')
-        else:
-            return descrip_choice
-
-def which_clothing_item():
-    while True:
-        clothing_item = input('Which type of clothing item is this? (Press enter for any)\n').lower()
-        if clothing_item == '':
-            return clothing_item
-        c.execute(f"SELECT * FROM clothing WHERE item_type LIKE '%{clothing_item}%'")
-        results = c.fetchall()
-        if len(results) < 1:
-            print('\nUnfortunately there is nothing described like that, please enter something else...\nIf you wish to bypass this, please press enter\n')
-        else:
-            return clothing_item
-
-def coloring():
-    while True:
-        color_choice = input('What color is this clothing? (Press enter for any)\n').lower()
-        if color_choice == '':
-            return color_choice
-        c.execute(f"SELECT * FROM clothing WHERE color LIKE '%{color_choice}%'")
-        results = c.fetchall()
-        if len(results) < 1:
-            print('\nUnfortunately there is nothing with that color, please enter something else...\nIf you wish to bypass this, please press enter\n')
-        else:
-            return color_choice
-        
-def branding():
-    while True:
-        brand_choice = input('Which brand are we looking for? (Press enter for any)\n').lower()
-        if brand_choice == '':
-            return brand_choice
-        c.execute(f"SELECT * FROM clothing WHERE brand LIKE '%{brand_choice}%'")
-        results = c.fetchall()
-        if len(results) < 1:
-            print('\nUnfortunately there is nothing branded like that, please enter something else...\nIf you wish to bypass this, please press enter\n')
-        else:
-            return brand_choice
 
 
 
@@ -85,10 +35,11 @@ while True:
     res = input('Do you want to search by brand?\nReturn y/n...').lower()
     if res == 'n':
         clothing_item, color_choice, descrip_choice, brand_choice = None, None, None, None
-        clothing_item, color_choice, descrip_choice, brand_choice = tester('Article of', clothing_item), tester('Color of', color_choice), tester('Description of', descrip_choice), ''
+        clothing_item, color_choice, descrip_choice, brand_choice = tester('type', 'item_type', clothing_item), tester('color', 'color', color_choice), tester('description', 'description', descrip_choice), ''
         break
     elif res == 'y':
-        brand_choice, clothing_item, color_choice, descrip_choice = branding(), which_clothing_item(), coloring(), how_describe()
+        clothing_item, color_choice, descrip_choice, brand_choice = None, None, None, None
+        brand_choice, clothing_item, color_choice, descrip_choice = tester('brand', 'brand', brand_choice), tester('type', 'item_type', clothing_item), tester('color', 'color', color_choice), tester('description', 'description', descrip_choice)
         break
     else:
         print('Please type either "y" or "n"')
